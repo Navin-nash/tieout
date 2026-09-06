@@ -37,6 +37,14 @@
   --color-refuse: #7a1220;
   --color-refuse-fill: #f6e3e1;
 
+  /* sequential ochre ramp — DESIGN.md §9.2, used by §9.3's aging bars.
+     §12.1's @theme block omits these four steps, so they are transcribed here
+     from §9.2's own table rather than invented. Flagged for the design worker. */
+  --color-ochre-1: #fbf3dc;
+  --color-ochre-2: #f3e0a8;
+  --color-ochre-3: #e8c769;
+  --color-ochre-4: #c7a030;
+
   /* radius */
   --radius-none: 0px;
   --radius-sm: 2px;
@@ -103,6 +111,12 @@
   --color-escalate-fill: #332707;
   --color-refuse: #e8828c;
   --color-refuse-fill: #341216;
+
+  /* ochre ramp, dark — DESIGN.md §9.2 */
+  --color-ochre-1: #241d08;
+  --color-ochre-2: #4a3a0e;
+  --color-ochre-3: #6e5714;
+  --color-ochre-4: #9c7d1e;
 
   --shadow-overlay: 0 4px 20px rgb(0 0 0 / 0.4);
 }
