@@ -1,0 +1,22 @@
+# Local development only. Postgres for the Tieout platform layer.
+# Production deployment is out of scope for this compose file.
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: tieout-postgres
+    environment:
+      POSTGRES_USER: tieout
+      POSTGRES_PASSWORD: tieout
+      POSTGRES_DB: tieout
+    ports:
+      - "5433:5432"
+    volumes:
+      - tieout-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tieout -d tieout"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  tieout-pgdata:
