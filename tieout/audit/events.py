@@ -71,6 +71,11 @@ def _canon(value: Any) -> Any:
         isinstance(value, Sequence) and not isinstance(value, (str, bytes))
     ):
         return [_canon(v) for v in value]
+    if hasattr(value, "amount") and hasattr(value, "currency"):
+        # A currency-tagged amount (tieout.ingest.money.Money). Duck-typed rather than
+        # imported, so the audit layer stays standalone. The amount goes through the Decimal
+        # rule above, so money still never touches a float.
+        return {"amount": _canon(value.amount), "currency": _canon(value.currency)}
     raise TypeError(f"{type(value).__name__} has no canonical form: {value!r}")
 
 

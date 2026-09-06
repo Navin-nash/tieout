@@ -34,6 +34,22 @@ class EvidenceTampered(ValueError):
     """A stored pack does not hash to the id it was filed under."""
 
 
+def _row_ref_text(ref: Any) -> str | None:
+    """Render a ``source_row_ref`` as text, or None if it is not usable lineage.
+
+    Accepts both shapes a caller can hold: a plain string, or the dumped
+    ``tieout.ingest.schema.SourceRowRef`` -- ``{"file": ..., "row_number": ...}`` -- which is
+    what ``LedgerEntry.model_dump()`` produces. Rendered as ``<file>#L<row_number>``.
+    """
+    if isinstance(ref, str):
+        return ref or None
+    if isinstance(ref, Mapping):
+        file, row_number = ref.get("file"), ref.get("row_number")
+        if isinstance(file, str) and file and isinstance(row_number, int):
+            return f"{file}#L{row_number}"
+    return None
+
+
 class ReviewAction(BaseModel):
     """The reviewer action, with identity and timestamp (requirement 6, last bullet)."""
 
@@ -75,10 +91,9 @@ class EvidencePack(BaseModel):
     @model_validator(mode="after")
     def _lineage_present(self) -> EvidencePack:
         for index, row in enumerate(self.source_rows):
-            ref = row.get(SOURCE_ROW_REF)
-            if not isinstance(ref, str) or not ref:
+            if _row_ref_text(row.get(SOURCE_ROW_REF)) is None:
                 raise ValueError(
-                    f"source_rows[{index}] has no {SOURCE_ROW_REF}; lineage back to the "
+                    f"source_rows[{index}] has no usable {SOURCE_ROW_REF}; lineage back to the "
                     "upstream extract is not optional (AS 1105 requirement 2)"
                 )
         return self
@@ -86,7 +101,7 @@ class EvidencePack(BaseModel):
     @property
     def source_row_refs(self) -> tuple[str, ...]:
         """Every row reference in the pack, in order -- the lineage chain to the manifest."""
-        return tuple(str(row[SOURCE_ROW_REF]) for row in self.source_rows)
+        return tuple(str(_row_ref_text(row[SOURCE_ROW_REF])) for row in self.source_rows)
 
     @property
     def pack_id(self) -> str:

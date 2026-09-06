@@ -312,3 +312,52 @@ def test_event_references_the_pack_it_was_decided_on(tmp_path):
     )
     assert log.verify().ok
     assert store.get(event.evidence).work_key == "wk_batch_4471"
+
+
+# ── integration with the real ingest models ───────────────────────────────────
+
+
+def test_pack_accepts_a_real_ingest_row(tmp_path):
+    """A pack must take `LedgerEntry.model_dump()` as-is, or the lineage chain is theoretical.
+
+    Guards two shapes this layer cannot choose: `source_row_ref` is a structured
+    SourceRowRef, not a string, and `amount` is a currency-tagged Money, not a bare Decimal.
+    """
+    from tieout.ingest.money import Money
+    from tieout.ingest.schema import LedgerEntry, SourceRowRef
+
+    entry = LedgerEntry(
+        id="led_1",
+        order_key="ord_9",
+        occurred_at=datetime(2026, 1, 31, 23, 59, 0, tzinfo=UTC),
+        amount=Money("1200.00", "USD"),
+        currency="USD",
+        status="settled",
+        method="card",
+        source_row_ref=SourceRowRef(file="ledger.csv", row_number=41),
+    )
+
+    pack = build_pack(
+        work_key="wk_batch_4471",
+        source_rows=(entry.model_dump(),),
+        features={"amount_delta": Decimal("0.00")},
+        policy_version="2026.01-r3",
+        thresholds={"amount_tolerance": Decimal("0.50")},
+        disposition="REFUSE",
+        rationale="two candidates inside tolerance",
+        timestamps=TIMES,
+    )
+
+    assert pack.source_row_refs == ("ledger.csv#L41",)
+
+    store = EvidenceStore(tmp_path / "evidence")
+    pack_id = store.put(pack)
+    assert store.verify(pack_id)
+    # Money survives as an exact decimal string, not a float.
+    assert '"amount":"1200.00"' in store.path_for(pack_id).read_text(encoding="utf-8")
+
+
+def test_money_object_canonicalises_without_a_float():
+    from tieout.ingest.money import Money
+
+    assert canonical_json({"m": Money("0.10", "USD")}) == '{"m":{"amount":"0.10","currency":"USD"}}'

@@ -127,6 +127,7 @@ are included as JSON `null`; they are not dropped, because "absent" and "null" m
 | `datetime` | String, UTC, `%Y-%m-%dT%H:%M:%S.%fZ` — always 6 fractional digits, always `Z`. Naive datetimes are rejected | `2026-09-06 09:42:09+05:30` → `"2026-09-06T04:12:09.000000Z"` |
 | mapping | JSON object, keys NFC-normalised, **sorted by key**, ascending Unicode **code point** order (Python's `str` ordering / `sort_keys=True`) — note this differs from UTF-16 code-unit order above the BMP | |
 | list / tuple | JSON array, **order preserved** — order is meaning | |
+| currency-tagged amount | An object exposing `amount` and `currency` (`tieout.ingest.money.Money`) → `{"amount": <the Decimal rule>, "currency": <string>}`. Duck-typed, not imported, so the audit layer stays standalone | `Money("0.10", "USD")` → `{"amount":"0.10","currency":"USD"}` |
 | anything else | **Rejected — `TypeError`.** Sets in particular: an unordered container has no canonical form | |
 
 ### 4.3 Why a float is rejected rather than converted
@@ -271,8 +272,11 @@ raises `EvidenceTampered` if the file it loaded is not the file that was filed. 
 
 ### Lineage
 
-Every row in `source_rows` must carry a non-empty `source_row_ref`; a pack without it will not
-construct. That reference resolves to **a file plus a row number**, and that file's **SHA256 lives
+Every row in `source_rows` must carry a usable `source_row_ref`; a pack without one will not
+construct. Both shapes a caller can hold are accepted: a plain string, or the structured
+`tieout.ingest.schema.SourceRowRef` — `{"file": ..., "row_number": ...}` — which is what
+`LedgerEntry.model_dump()` produces. `source_row_refs` renders either as `<file>#L<row_number>`.
+That reference resolves to **a file plus a row number**, and that file's **SHA256 lives
 in the run manifest** (`tieout/ingest/manifest.py`), re-verified at scoring time. So a pack traces
 back to specific bytes on disk that were hashed at ingest, which is exactly what AS 1105 ¶.10 asks
 an auditor to test.
@@ -290,8 +294,8 @@ the fact.
 modelled as **two unrelated types**:
 
 ```python
-ServiceIdentity(name="tieout-agent", version="v0.3.1")   # → "svc:tieout-agent@v0.3.1"
-HumanIdentity(user="controller", org="acme")             # → "human:controller@acme"
+ServiceIdentity(name="tieout-agent", version="v0.3.1")  # → "svc:tieout-agent@v0.3.1"
+HumanIdentity(user="controller", org="acme")  # → "human:controller@acme"
 ```
 
 Neither is a subtype of the other, so a slot annotated `HumanIdentity` **cannot** receive a
