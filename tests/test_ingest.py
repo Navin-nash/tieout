@@ -12,11 +12,11 @@ from tieout.ingest.manifest import build_manifest, verify
 from tieout.ingest.paths import ForbiddenPathError, open_allowed, resolve_allowed_path
 from tieout.ingest.reconriver import (
     SchemaMismatchError,
+    load_all,
     load_ledger_entries,
 )
 
 RAW_DIR = Path("data/raw")
-HOLDOUT_FILE = Path("data/holdout/expected_reconciliation.csv")
 
 pytestmark_dataset = pytest.mark.skipif(
     not RAW_DIR.exists(),
@@ -61,9 +61,11 @@ def test_agent_cannot_read_ground_truth(tmp_path: Path, monkeypatch: pytest.Monk
 
 @pytestmark_dataset
 def test_real_dataset_has_zero_quarantine() -> None:
-    result = load_ledger_entries()
-    assert result.quarantined == []
-    assert len(result.rows) == 10000
+    data = load_all()
+    assert all(len(r.quarantined) == 0 for r in data.values())
+    assert len(data["ledger"].rows) == 10000
+    assert len(data["processor"].rows) == 10200
+    assert len(data["bank"].rows) == 1499
 
 
 @pytestmark_dataset
@@ -77,9 +79,7 @@ def test_malformed_row_quarantined_not_dropped(
         "internal_payment_id,merchant_order_id,occurred_at,gross_amount,currency,"
         "payment_status,payment_method,synthetic_customer_reference\n"
     )
-    good = (
-        "pay_1,ord_1,2026-01-01T00:00:00Z,10.00,USD,captured,card,cust_1\n"
-    )
+    good = "pay_1,ord_1,2026-01-01T00:00:00Z,10.00,USD,captured,card,cust_1\n"
     bad = "pay_2,ord_2,2026-01-01T00:00:00Z,NOT_A_NUMBER,USD,captured,card,cust_2\n"
     (raw / "internal_transactions.csv").write_text(header + good + bad, encoding="utf-8")
     (raw / "scenario_manifest.json").write_text("{}", encoding="utf-8")

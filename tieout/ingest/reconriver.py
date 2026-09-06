@@ -74,14 +74,12 @@ def _check_columns(header: list[str], expected: list[str], filename: str) -> Non
     for col in expected:
         if col not in header:
             raise SchemaMismatchError(
-                f"{filename}: missing required column '{col}' "
-                f"(expected {expected}, got {header})"
+                f"{filename}: missing required column '{col}' (expected {expected}, got {header})"
             )
     for col in header:
         if col not in expected:
             raise SchemaMismatchError(
-                f"{filename}: unexpected column '{col}' "
-                f"(expected {expected}, got {header})"
+                f"{filename}: unexpected column '{col}' (expected {expected}, got {header})"
             )
     raise SchemaMismatchError(
         f"{filename}: column order mismatch (expected {expected}, got {header})"
@@ -113,9 +111,7 @@ def load_ledger_entries(*, root: Path | None = None) -> IngestResult[LedgerEntry
     good: list[LedgerEntry] = []
     quarantined: list[QuarantinedRow] = []
 
-    for row_num, row in enumerate(
-        _read_csv_rows(filename, INTERNAL_COLUMNS, root=base), start=2
-    ):
+    for row_num, row in enumerate(_read_csv_rows(filename, INTERNAL_COLUMNS, root=base), start=2):
         try:
             currency = row["currency"].strip()
             good.append(
@@ -149,9 +145,7 @@ def load_processor_events(*, root: Path | None = None) -> IngestResult[Processor
     good: list[ProcessorEvent] = []
     quarantined: list[QuarantinedRow] = []
 
-    for row_num, row in enumerate(
-        _read_csv_rows(filename, PROCESSOR_COLUMNS, root=base), start=2
-    ):
+    for row_num, row in enumerate(_read_csv_rows(filename, PROCESSOR_COLUMNS, root=base), start=2):
         try:
             currency = row["currency"].strip()
             good.append(
@@ -187,9 +181,7 @@ def load_bank_entries(*, root: Path | None = None) -> IngestResult[BankEntry]:
     good: list[BankEntry] = []
     quarantined: list[QuarantinedRow] = []
 
-    for row_num, row in enumerate(
-        _read_csv_rows(filename, BANK_COLUMNS, root=base), start=2
-    ):
+    for row_num, row in enumerate(_read_csv_rows(filename, BANK_COLUMNS, root=base), start=2):
         try:
             currency = row["currency"].strip()
             good.append(

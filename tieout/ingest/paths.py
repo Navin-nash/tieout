@@ -47,9 +47,7 @@ def resolve_allowed_path(path: str | Path, root: Path | None = None) -> Path:
         ) from None
 
     if candidate.name not in ALLOWED_FILENAMES:
-        raise ForbiddenPathError(
-            f"file {candidate.name!r} is not in the agent-readable allowlist"
-        )
+        raise ForbiddenPathError(f"file {candidate.name!r} is not in the agent-readable allowlist")
 
     return candidate
 

@@ -82,18 +82,14 @@ class Money:
 
     def _check_currency(self, other: Money) -> None:
         if self.currency != other.currency:
-            raise CurrencyMismatchError(
-                f"cannot combine {self.currency} and {other.currency}"
-            )
+            raise CurrencyMismatchError(f"cannot combine {self.currency} and {other.currency}")
 
 
 def money_sum(items: list[Money], currency: str) -> Money:
     total = Money("0", currency)
     for item in items:
         if item.currency != currency:
-            raise CurrencyMismatchError(
-                f"expected {currency}, got {item.currency} in sum"
-            )
+            raise CurrencyMismatchError(f"expected {currency}, got {item.currency} in sum")
         total = total + item
     return total
 

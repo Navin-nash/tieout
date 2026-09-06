@@ -2,6 +2,7 @@
 
 See docs/OBSERVABILITY.md for the span map and the cited API docs.
 """
+
 from tieout.obs.tracing import (
     Tracer,
     disposition_attrs,

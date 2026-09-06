@@ -4,6 +4,7 @@ Every test runs with NEATLOGS_API_KEY unset, so all of them exercise the
 no-op path required by ADR-001 ("zero LLM calls, no observability configured
 must still work"). No network calls are made anywhere in this file.
 """
+
 from __future__ import annotations
 
 import inspect

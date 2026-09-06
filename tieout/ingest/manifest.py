@@ -127,8 +127,6 @@ def verify(manifest: RunManifest, *, root: Path | None = None) -> VerificationRe
             continue
         actual = sha256_file(path)
         if actual != expected:
-            mismatches.append(
-                FileHashMismatch(file=name, expected=expected, actual=actual)
-            )
+            mismatches.append(FileHashMismatch(file=name, expected=expected, actual=actual))
 
     return VerificationResult(ok=not mismatches, mismatches=mismatches)
