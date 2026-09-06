@@ -7,8 +7,8 @@ from tieout.obs.tracing import (
     disposition_attrs,
     init_tracing,
     redact_attrs,
-    traced,
     trace_span,
+    traced,
 )
 
 __all__ = [

@@ -10,7 +10,7 @@ import inspect
 
 import pytest
 
-from tieout.obs import disposition_attrs, init_tracing, redact_attrs, traced, trace_span
+from tieout.obs import disposition_attrs, init_tracing, redact_attrs, trace_span, traced
 
 
 @pytest.fixture(autouse=True)
