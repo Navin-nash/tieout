@@ -24,7 +24,6 @@ PACKAGES = [
     "tieout.close",
     "tieout.api",
     "tieout.agent",
-    "tieout.obs",
 ]
 
 # docs/SPEC.md section 12 command list (top-level + subcommands).
