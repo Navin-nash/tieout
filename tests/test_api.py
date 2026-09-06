@@ -130,9 +130,7 @@ def test_no_route_posts_free_text_amount():
             assert "amount" not in model.model_fields
     for name in ABSENT_TOOLS:
         if "amount" in name or "adjusting" in name:
-            assert not any(
-                name.replace("_", "-") in r.path for r in _all_api_routes()
-            )
+            assert not any(name.replace("_", "-") in r.path for r in _all_api_routes())
 
 
 def test_no_ground_truth_route():

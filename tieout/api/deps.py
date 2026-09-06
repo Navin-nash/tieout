@@ -200,10 +200,7 @@ def _tier_breakdown(dispositions: list[Disposition]) -> dict[str, dict[str, Any]
         tier = disp.tier.value
         counts[tier] += 1
         dollars[tier] += disp.verdict.features.amount_abs
-    return {
-        tier: {"count": counts[tier], "dollars": money_str(dollars[tier])}
-        for tier in counts
-    }
+    return {tier: {"count": counts[tier], "dollars": money_str(dollars[tier])} for tier in counts}
 
 
 def _blocking_list(dispositions: list[Disposition]) -> list[dict[str, Any]]:
