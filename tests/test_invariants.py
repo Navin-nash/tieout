@@ -352,9 +352,7 @@ def test_journal_always_balances(outcome_class: str) -> None:
     assert len(lines) == 2 * len(entry.pairs)
     assert sum(side == "DR" for side, _, _ in lines) == sum(side == "CR" for side, _, _ in lines)
     # Derived, never supplied: every amount on the entry came off a matched source row.
-    source_amounts = {
-        row.amount.amount for row in MATCH_SHAPES[outcome_class].ledger
-    } | {
+    source_amounts = {row.amount.amount for row in MATCH_SHAPES[outcome_class].ledger} | {
         amount
         for event in MATCH_SHAPES[outcome_class].processor
         for amount in (event.net.amount, event.fee.amount)
@@ -690,9 +688,7 @@ def test_every_disposition_writes_one_chained_event(policy: GatePolicy, log: Eve
     assert events[0].features["amount_delta"] == "10.00"
     # No float ever reaches the canonicaliser.
     assert all(
-        not isinstance(value, float)
-        for event in events
-        for value in event.features.values()
+        not isinstance(value, float) for event in events for value in event.features.values()
     )
     assert all(d.event_id for d in dispositions)
 

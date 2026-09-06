@@ -108,9 +108,7 @@ def assert_no_force_parameter(func: Any) -> None:
     because the point is that the *signature* offers no such option: a caller reading the API
     must find nothing to reach for.
     """
-    offending = sorted(
-        set(inspect.signature(func).parameters) & OVERRIDE_PARAMETER_NAMES
-    )
+    offending = sorted(set(inspect.signature(func).parameters) & OVERRIDE_PARAMETER_NAMES)
     if offending:
         raise InvariantViolation(
             "I4",

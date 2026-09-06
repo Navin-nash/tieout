@@ -182,9 +182,7 @@ def read_verdict(verdict: Any) -> GateVerdict:
         outcome_class=_enum_text(_require(verdict, "outcome_class", "verdict")),
         reason_code=str(_require(verdict, "reason_code", "verdict")),
         confidence=float(_require(verdict, "confidence", "verdict")),
-        adjudicator=(
-            "DETERMINISTIC" if adjudicator is _MISSING else _enum_text(adjudicator)
-        ),
+        adjudicator=("DETERMINISTIC" if adjudicator is _MISSING else _enum_text(adjudicator)),
         policy_version=None if policy_version is _MISSING else str(policy_version),
         features=features,
     )
