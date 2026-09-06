@@ -27,8 +27,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
       </head>
       <body className="min-h-full flex flex-col">
+        {/* storageKey must match the key THEME_SCRIPT reads above, or the
+            anti-flash script restores nothing on reload. */}
         <ThemeProvider
           attribute="class"
+          storageKey="tieout-theme"
           defaultTheme="light"
           enableSystem
           disableTransitionOnChange
