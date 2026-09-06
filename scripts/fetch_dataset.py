@@ -114,7 +114,10 @@ def main() -> int:
     fetch_all()
     verify_checksums()
     report_actuals()
-    print("\nOK -- month-end-close fetched, split into data/raw/ and data/holdout/, checksums verified.")
+    print(
+        "\nOK -- month-end-close fetched, split into data/raw/ and "
+        "data/holdout/, checksums verified."
+    )
     return 0
 
 

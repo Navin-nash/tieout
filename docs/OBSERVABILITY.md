@@ -52,24 +52,28 @@ from tieout.obs import init_tracing, traced, trace_span, disposition_attrs
 # once, at process start (e.g. tieout/cli.py) -- never required for correctness
 init_tracing()
 
+
 # decorator form
 @traced("classify")
-def classify(work_item: WorkItem) -> Verdict:
-    ...
+def classify(work_item: WorkItem) -> Verdict: ...
+
 
 # context-manager form, for attaching attributes
 def adjudicate(work_item: WorkItem) -> Verdict:
-    with trace_span("adjudicate", **disposition_attrs(
-        work_key=work_item.work_key,
-        outcome_class=verdict.outcome_class.value,
-        reason_code=verdict.reason_code,
-        disposition=disposition.action.value,
-        policy_version=policy.version,
-        adjudicator=verdict.adjudicator.value,
-        tokens_in=usage.input_tokens,
-        tokens_out=usage.output_tokens,
-        cost_usd=str(usage.cost_usd),
-    )):
+    with trace_span(
+        "adjudicate",
+        **disposition_attrs(
+            work_key=work_item.work_key,
+            outcome_class=verdict.outcome_class.value,
+            reason_code=verdict.reason_code,
+            disposition=disposition.action.value,
+            policy_version=policy.version,
+            adjudicator=verdict.adjudicator.value,
+            tokens_in=usage.input_tokens,
+            tokens_out=usage.output_tokens,
+            cost_usd=str(usage.cost_usd),
+        ),
+    ):
         ...
 ```
 

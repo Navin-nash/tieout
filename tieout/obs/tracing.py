@@ -29,6 +29,7 @@ degrades to a no-op that never raises and never blocks the caller -- missing
 key, missing package, and a failed network call all take the same fallback
 path.
 """
+
 from __future__ import annotations
 
 import contextlib
@@ -146,8 +147,8 @@ def init_tracing() -> Tracer:
 def trace_span(name: str, **attrs: Any):
     """Context manager. Live span if tracing is configured, no-op otherwise.
 
-        with trace_span("classify", work_key=wk, outcome_class="MATCHED"):
-            ...
+    with trace_span("classify", work_key=wk, outcome_class="MATCHED"):
+        ...
     """
     return _tracer.span(name, **attrs)
 
@@ -155,9 +156,9 @@ def trace_span(name: str, **attrs: Any):
 def traced(name: str) -> Callable[[F], F]:
     """Decorator version of `trace_span`, for wrapping a whole function.
 
-        @traced("ingest")
-        def ingest(path: str) -> Manifest:
-            ...
+    @traced("ingest")
+    def ingest(path: str) -> Manifest:
+        ...
     """
 
     def decorator(fn: F) -> F:
