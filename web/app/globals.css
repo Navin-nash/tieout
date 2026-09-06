@@ -1,0 +1,228 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ==========================================================================
+   DESIGN.md §12.1 — Tailwind v4 @theme
+   Values are copied verbatim from DESIGN.md. When DESIGN.md changes, update
+   this file; do not edit the tokens locally (see web/README.md).
+   Fonts are emitted with @theme inline so the utilities resolve
+   var(--font-*) against the next/font variables at runtime without a
+   self-referential cycle; the remaining tokens stay plain @theme so the
+   `.dark` overrides below cascade through var(--color-*).
+   ========================================================================== */
+@theme inline {
+  --font-statement: var(--font-statement), ui-serif, Georgia, serif;
+  --font-ui: var(--font-ui), ui-sans-serif, system-ui, sans-serif;
+  --font-numeral: var(--font-numeral), ui-monospace, "SF Mono", monospace;
+}
+
+@theme {
+  /* light surface */
+  --color-paper: #faf9f6;
+  --color-paper-inset: #f2f0eb;
+  --color-ink: #1a1613;
+  --color-ink-muted: #5b5650;
+  --color-border-hairline: #d8d4cc;
+  --color-border-interactive: #8a8375;
+  --color-focus: #1b5fb0;
+
+  /* disposition — light */
+  --color-sampled: #3b5166;
+  --color-sampled-fill: #e7ecef;
+  --color-escalate: #7a5b12;
+  --color-escalate-fill: #f5e9c9;
+  --color-refuse: #7a1220;
+  --color-refuse-fill: #f6e3e1;
+
+  /* radius */
+  --radius-none: 0px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+
+  /* motion */
+  --duration-instant: 100ms;
+  --duration-fast: 160ms;
+  --duration-base: 220ms;
+  --duration-slow: 360ms;
+  --duration-deliberate: 600ms;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out-snap: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --shadow-overlay: 0 4px 16px rgb(0 0 0 / 0.12);
+
+  /* type scale — DESIGN.md §3.2 */
+  --text-display-2xl: 56px;
+  --text-display-2xl--line-height: 1.05;
+  --text-display-xl: 40px;
+  --text-display-xl--line-height: 1.1;
+  --text-display-lg: 32px;
+  --text-display-lg--line-height: 1.15;
+  --text-heading-md: 24px;
+  --text-heading-md--line-height: 1.3;
+  --text-heading-sm: 20px;
+  --text-heading-sm--line-height: 1.35;
+  --text-body-lg: 18px;
+  --text-body-lg--line-height: 1.6;
+  --text-body: 16px;
+  --text-body--line-height: 1.5;
+  --text-body-sm: 14px;
+  --text-body-sm--line-height: 1.45;
+  --text-caption: 12px;
+  --text-caption--line-height: 1.35;
+  --text-numeral-lg: 32px;
+  --text-numeral-lg--line-height: 1.1;
+  --text-numeral-md: 16px;
+  --text-numeral-md--line-height: 1.4;
+  --text-numeral-sm: 13px;
+  --text-numeral-sm--line-height: 1.35;
+
+  /* tracking — DESIGN.md §3.2 */
+  --tracking-display-2xl: -0.015em;
+  --tracking-display-xl: -0.01em;
+  --tracking-display-lg: -0.01em;
+  --tracking-caption: 0.04em;
+}
+
+/* DESIGN.md §12.1 — dark overrides (designed, not inverted) */
+.dark {
+  --color-paper: #15130f;
+  --color-paper-inset: #1e1b16;
+  --color-ink: #ede9e2;
+  --color-ink-muted: #a39c90;
+  --color-border-hairline: #37322a;
+  --color-border-interactive: #726a59;
+  --color-focus: #6fa8e8;
+
+  --color-sampled: #9cc1e8;
+  --color-sampled-fill: #1d2a34;
+  --color-escalate: #e8c769;
+  --color-escalate-fill: #332707;
+  --color-refuse: #e8828c;
+  --color-refuse-fill: #341216;
+
+  --shadow-overlay: 0 4px 20px rgb(0 0 0 / 0.4);
+}
+
+/* ==========================================================================
+   DESIGN.md §12.2 — shadcn/ui CSS-variable theme (verbatim)
+   Mapped onto shadcn's own variable names so shadcn components pick these
+   up unchanged. --destructive is intentionally the ONLY shadcn slot reused
+   for the REFUSE stamp — never reuse it for generic form errors.
+   ========================================================================== */
+:root {
+  --background: 40 27% 97%; /* #FAF9F6 */
+  --foreground: 25 15% 10%; /* #1A1613 */
+  --card: 40 27% 97%;
+  --card-foreground: 25 15% 10%;
+  --popover: 40 27% 97%;
+  --popover-foreground: 25 15% 10%;
+  --primary: 25 15% 10%; /* ink-fill buttons */
+  --primary-foreground: 40 27% 97%;
+  --secondary: 40 15% 92%; /* paper-inset */
+  --secondary-foreground: 25 15% 10%;
+  --muted: 40 15% 92%;
+  --muted-foreground: 30 5% 35%; /* ink-muted */
+  --accent: 210 63% 39%; /* focus blue, sparing use */
+  --accent-foreground: 40 27% 97%;
+  --destructive: 353 74% 28%; /* refuse oxblood — used ONLY for T3, never generic errors */
+  --destructive-foreground: 8 47% 92%;
+  --border: 40 12% 82%; /* border-hairline */
+  --input: 35 10% 55%; /* border-interactive */
+  --ring: 210 63% 39%; /* focus */
+  --radius: 0.25rem; /* radius-md */
+}
+
+.dark {
+  --background: 30 15% 7%; /* #15130F */
+  --foreground: 40 20% 91%; /* #EDE9E2 */
+  --card: 30 15% 7%;
+  --card-foreground: 40 20% 91%;
+  --popover: 30 15% 7%;
+  --popover-foreground: 40 20% 91%;
+  --primary: 40 20% 91%;
+  --primary-foreground: 30 15% 7%;
+  --secondary: 32 13% 12%; /* paper-inset dark */
+  --secondary-foreground: 40 20% 91%;
+  --muted: 32 13% 12%;
+  --muted-foreground: 30 10% 62%; /* ink-muted dark */
+  --accent: 210 68% 68%;
+  --accent-foreground: 30 15% 7%;
+  --destructive: 353 73% 76%; /* refuse dark */
+  --destructive-foreground: 353 45% 14%;
+  --border: 40 12% 18%;
+  --input: 40 12% 40%;
+  --ring: 210 68% 68%;
+  --radius: 0.25rem;
+}
+
+/* --------------------------------------------------------------------------
+   Bridge: DESIGN.md §12.2 publishes the shadcn slots as bare HSL triples
+   ("40 27% 97%"), which is the Tailwind-v3-era shadcn convention. Under
+   Tailwind v4 a utility resolves --color-* directly as a colour value, so the
+   triples must be wrapped in hsl() to become usable. The triples above stay
+   verbatim; this block is the only adapter. Do not edit the values — edit
+   DESIGN.md and re-copy.
+   -------------------------------------------------------------------------- */
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    /* DESIGN.md §3.1 — IBM Plex Sans is the interface family, not Tailwind's
+       default sans stack. */
+    @apply font-ui;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* DESIGN.md §7.6 — prefers-reduced-motion, honoured once at the root so no
+     component has to remember. GSAP call sites consume the same signal through
+     gsap.matchMedia() in lib/motion.ts; this covers every CSS transition and
+     animation in the app, including third-party components. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 1ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 1ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* DESIGN.md §3.3 — inline dollar figures in serif prose get a tabular +
+   lining override ("<span class="tabular">"). */
+@utility tabular {
+  font-variant-numeric: tabular-nums lining-nums;
+}
