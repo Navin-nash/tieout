@@ -251,9 +251,11 @@ This module knows nothing about reconciliation. Whoever owns the work registers 
 ```python
 from tieout.platform import jobs
 
+
 async def reconcile(ctx: jobs.JobContext) -> None:
     await ctx.progress(10)
     ...
+
 
 jobs.register_handler("reconcile", reconcile)
 ```
