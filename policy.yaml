@@ -1,0 +1,88 @@
+# ==============================================================================
+# TIEOUT RECONCILIATION POLICY
+#
+# NOTE ON MATERIALITY FIGURES (SPEC SECTION 19 COMPLIANCE):
+# The materiality figures below ($750,000 overall, $450,000 performance,
+# $30,000 clearly-trivial) are ILLUSTRATIVE values calibrated for a synthetic
+# entity (ACME-US with planning revenue of $150M) in the ReconRiver benchmark.
+# They are not real thresholds for a live operating company and must be calibrated
+# by the entity's Controller and Audit Committee prior to production deployment.
+# ==============================================================================
+
+version: "2026.01-r3"
+effective_from: 2026-01-01
+entity: ACME-US
+supersedes: "2026.01-r2"
+illustrative: true
+
+materiality:
+  overall:
+    value: 750000.00          # AS 2105: must be a specified amount (practice band 0.5–7% of revenue)
+    basis: "0.5% of revenue"  # FY26 planning revenue $150M
+    set_by: "controller@acme"
+    set_at: 2026-01-02T09:14:00Z
+    rationale: "FY26 planning revenue $150M; conservative end of 0.5-7.0% practice band"
+  performance:
+    value: 450000.00          # AS 2105: must be strictly less than overall materiality
+    basis: "60% of overall"   # practice band 50–75%
+    set_by: "controller@acme"
+    set_at: 2026-01-02T09:14:00Z
+    rationale: "Aggregation risk across 3 operating subsidiaries"
+  clearly_trivial:
+    value: 30000.00           # practice band 3–5% of overall materiality
+    basis: "4% of overall"
+    set_by: "controller@acme"
+    set_at: 2026-01-02T09:14:00Z
+    rationale: "Aggregation floor below which items will not be accumulated"
+
+tolerances:                   # by category, NOT universal
+  - category: card_settlement
+    amount_abs: 0.02
+    amount_pct: 0.0005
+    date_window_days: 3
+    rationale: "Processor rounding + T+2 settlement window"
+  - category: wire
+    amount_abs: 0.00          # wires must match to the cent
+    date_window_days: 1
+    rationale: "Wire transfers have zero rounding tolerance and settle same or next day"
+  - category: fx_settlement
+    amount_pct: 0.005
+    date_window_days: 5
+    rationale: "Rate timing between booking and credit"
+
+# Fee policy terms are authoritative in scenario_manifest.json (SPEC section 19)
+# rather than hardcoding static literals into the policy configuration.
+fee_policy:
+  source: scenario_manifest
+
+confidence_tiers:
+  auto:
+    min_confidence: 0.95
+    max_amount: clearly_trivial
+  auto_sampled:
+    min_confidence: 0.90
+    max_amount: performance
+    sample_rate: 0.05
+  escalate:
+    min_confidence: 0.60
+
+qualitative_overrides:        # SAB 99 -- force escalation regardless of amount
+  - crosses_covenant_threshold
+  - changes_sign_income_to_loss
+  - related_party_counterparty
+  - masks_trend_reversal
+  - affects_management_compensation
+  - conceals_unlawful_transaction
+
+je_red_flags:                 # AS 2401 para .61 applied against our own output
+  - round_number_amount
+  - seldom_used_account
+  - post_close_timing
+  - unusual_initiator
+  - no_supporting_explanation
+
+aging:
+  reconcile_within_working_days: 30      # U. of Houston MAPP 05.04.06
+  suspense_resolve_within_days: 60       # VA Financial Policy Ch. 1
+  escalate_to_controller_after_days: 30
+  buckets: [30, 60, 90, 120]
