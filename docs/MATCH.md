@@ -73,36 +73,47 @@ Confidence scores are directly aligned with the Refusal Gate tiers (SPEC section
 
 ---
 
-## 5. Measured Dataset Distribution (ReconRiver `month-end-close`)
+## 5. Measured Output Distribution on `data/raw`
 
-The cascade was executed over the full 11,539 work items in the real dataset.
-The results match the verified ground-truth distribution from `docs/DATASET.md` byte-for-byte:
+The cascade's output distribution can be reproduced on `data/raw/` (without accessing holdout files) using:
 
-| Outcome Class | Ground Truth (`docs/DATASET.md`) | Cascade Measured Count | Match? |
-|---|---:|---:|:---:|
-| `MATCHED` | 11,139 | 11,139 | ✅ |
-| `PARTIAL_REFUND` | 100 | 100 | ✅ |
-| `REFUND_MATCHED` | 100 | 100 | ✅ |
-| `AMOUNT_MISMATCH` | 40 | 40 | ✅ |
-| `LATE_SETTLEMENT` | 40 | 40 | ✅ |
-| `MISSING_PROCESSOR` | 30 | 30 | ✅ |
-| `FEE_MISMATCH` | 20 | 20 | ✅ |
-| `CURRENCY_MISMATCH` | 20 | 20 | ✅ |
-| `MISSING_INTERNAL` | 20 | 20 | ✅ |
-| `MISSING_BANK_SETTLEMENT` | 20 | 20 | ✅ |
-| `AMBIGUOUS_MATCH` | 10 | 10 | ✅ |
-| **Total** | **11,539** | **11,539** | ✅ |
+```bash
+python scripts/measure_cascade.py
+```
 
-### Scope Breakdown:
-- **Order Scope Work Items**: 10,020 (9,660 `MATCHED` + 360 exceptions)
-- **Settlement Scope Work Items**: 1,519 (1,439 `MATCHED` + 40 `LATE_SETTLEMENT` + 40 exceptions)
-- **Grand Total**: 11,539 items
+### Reproducible Measurement Output:
+- **Raw Input Rows**: 10,000 ledger (`internal_transactions.csv`), 10,200 processor (`processor_transactions.csv`), 1,499 bank settlement entries (`bank_settlements.csv`).
+- **Total WorkItems Generated**: 11,539
+  - Order scope: 10,020 work items
+  - Settlement scope: 1,519 work items
 
-### Deterministic Resolution Rate:
-- **High-confidence straight-through (T0 + T1)**: 11,379 items (98.6%)
-- **Escalated (T2)**: 80 items (0.7%)
-- **Refused / Inadmissible (T3)**: 80 items (0.7%)
-- **LLM residual needed**: **0 items** — 100% of the 11,539 items are deterministically classified with exact ground-truth fidelity.
+### Produced Class Counts:
+
+| Outcome Class | Emitted Count |
+|---|---:|
+| `MATCHED` | 11,139 |
+| `PARTIAL_REFUND` | 100 |
+| `REFUND_MATCHED` | 100 |
+| `AMOUNT_MISMATCH` | 40 |
+| `LATE_SETTLEMENT` | 40 |
+| `MISSING_PROCESSOR` | 30 |
+| `FEE_MISMATCH` | 20 |
+| `CURRENCY_MISMATCH` | 20 |
+| `MISSING_INTERNAL` | 20 |
+| `MISSING_BANK_SETTLEMENT` | 20 |
+| `AMBIGUOUS_MATCH` | 10 |
+| **Total** | **11,539** |
+
+### Produced Confidence Tier Split:
+- **T0 · AUTO_POST (conf ≥ 0.95)**: 11,239 items (97.40%)
+- **T1 · AUTO_SAMPLED (0.90 ≤ conf < 0.95)**: 140 items (1.21%)
+- **T2 · ESCALATE (0.60 ≤ conf < 0.90)**: 80 items (0.69%)
+- **T3 · REFUSE (conf < 0.60)**: 80 items (0.69%)
+
+### Measurement Caveats & Ground-Truth Separation:
+1. **Unmeasured Accuracy at this Layer**: The cascade's per-item accuracy and per-class precision/recall are **unmeasured** at Layer 2. True per-item accuracy and confusion matrices can only be produced by the out-of-process scorer (`tieout/score`, a separate worker) evaluating against held-out labels (`data/holdout/expected_reconciliation.csv`).
+2. **Distribution Consistency vs. Correctness**: The aggregate class totals produced by the cascade are consistent with the published summary counts in `docs/DATASET.md`. However, aggregate count consistency does **not** establish per-item correctness, as offsetting misclassifications could theoretically yield identical totals.
+3. **Role of Downstream Layers**: Layer 2 emits deterministic candidate verdicts and feature vectors. Residual adjudication and final refusal gate enforcement occur downstream.
 
 ---
 
