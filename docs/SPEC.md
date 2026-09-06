@@ -1,4 +1,4 @@
-# Tieout — Design Specification
+# Tieout — Product Specification
 
 **The close agent that refuses to plug — because plugging is unrepresentable in its tool surface, not because we asked it nicely.**
 
@@ -145,7 +145,8 @@ Deliberately mapped onto Maximor's own three published layers. Speaking a judge'
 | Validation | pydantic v2 | Schema validation at every boundary; frozen models for immutability. |
 | LLM | `claude-sonnet-5` via Anthropic SDK, structured output | Adjudication only, on the residual. Swappable and **optional**. |
 | API | FastAPI + uvicorn | Serves JSON to a static dashboard. No build step. |
-| Frontend | Vanilla HTML/CSS/JS reading JSON | Zero toolchain. In a 30-hour window a build step is a liability. |
+| Frontend | **Next.js (App Router) + TypeScript + Tailwind + shadcn/ui + GSAP**, auth by **Better Auth** | Three React-shaped surfaces (landing, three dashboard screens, agent UI) and React-only component libraries make vanilla the *longer* path. Supersedes the original zero-toolchain row — see `docs/ADR-002-frontend-stack.md`. The CLI demo path stays independent of the frontend. |
+| Agent framework | **LangGraph `deepagents`** (Python) | `create_deep_agent()`'s explicit `tools` list *is* the constrained tool surface of §7; `interrupt()` + checkpointer gives durable four-eyes HITL. Vercel `eve` rejected — see `docs/ADR-001-agent-framework.md`. Optional: `reconcile` runs with zero LLM calls. |
 | Observability | **Neatlogs** (`pip install neatlogs`) | Sponsor tool, MIT, ~2 lines, produces the reliability evidence the rubric asks for. |
 | Tests | pytest | Concentrated on gate invariants, not coverage theatre. |
 | Storage | JSONL event log + SQLite read model | Append-only log is the source of truth; SQLite is derived. |
@@ -748,10 +749,18 @@ tieout/
   api/
     app.py           # FastAPI
     routes.py
+  agent/             # ← deepagents harness (ADR-001); optional, never on the reconcile path
+  obs/               # ← Neatlogs tracing
   cli.py             # the tieout CLI
 
-web/
-  index.html  queue.html  score.html   # vanilla, read JSON
+web/                 # ← Next.js App Router (ADR-002)
+  app/
+    (marketing)/     # landing page
+    (app)/           # close status · review queue · scoreboard
+      assistant/     # agent UI (ai-elements + assistant-ui)
+    api/auth/        # Better Auth route handler
+  components/ui/     # shadcn/ui
+  lib/               # API client, Better Auth config, design tokens
 
 tests/
   test_invariants.py      # ← I1–I4. The most important file here.
@@ -762,7 +771,10 @@ tests/
 
 policy.yaml
 README.md                 # setup instructions — a Devpost requirement
-docs/DESIGN.md            # this file
+DESIGN.md                 # visual design system (see ADR-002)
+docs/SPEC.md              # this file
+docs/DATASET.md  docs/RESEARCH.md  docs/PLAN.md
+docs/ADR-001-agent-framework.md  docs/ADR-002-frontend-stack.md
 ```
 
 ---

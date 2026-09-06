@@ -6,3 +6,13 @@ __pycache__/
 data/raw/
 runs/
 .DS_Store
+opencode.json
+data/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+node_modules/
+web/.next/
+*.egg-info/
+.coverage
+htmlcov/
