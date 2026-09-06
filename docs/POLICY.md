@@ -25,11 +25,11 @@ Under SAB 99 and PCAOB AS 1105 (Audit Evidence), a bare number without instituti
 
 ```python
 class Threshold(FrozenModel):
-    value: Amount           # Decimal-backed, 2dp, ROUND_HALF_UP (floats strictly rejected)
-    basis: NonEmpty         # e.g. "0.5% of planning revenue ($150M)"
-    set_by: NonEmpty        # Attributed human principal, e.g. "controller@acme"
-    set_at: Attested        # Timezone-aware UTC timestamp
-    rationale: NonEmpty     # Business & risk rationale
+    value: Amount  # Decimal-backed, 2dp, ROUND_HALF_UP (floats strictly rejected)
+    basis: NonEmpty  # e.g. "0.5% of planning revenue ($150M)"
+    set_by: NonEmpty  # Attributed human principal, e.g. "controller@acme"
+    set_at: Attested  # Timezone-aware UTC timestamp
+    rationale: NonEmpty  # Business & risk rationale
 ```
 
 A policy file containing a threshold without all five provenance components fails validation at load time.

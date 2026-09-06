@@ -200,9 +200,8 @@ def assess_red_flags(
     fired = evaluate_red_flags(entry, enabled_flags)
     has_flags = bool(fired)
     if has_flags:
-        explanation = (
-            f"AS 2401 red flags fired ({len(fired)}): "
-            + "; ".join(f"{f.flag} ({f.explanation})" for f in fired)
+        explanation = f"AS 2401 red flags fired ({len(fired)}): " + "; ".join(
+            f"{f.flag} ({f.explanation})" for f in fired
         )
     else:
         explanation = "no AS 2401 red flags fired; entry meets baseline fraud-test criteria"

@@ -93,9 +93,7 @@ class FiredFactor(FrozenModel):
 # the rollover amount, since that is the current-year income-statement effect.
 
 
-def _crosses_covenant_threshold(
-    effect: Decimal, facts: QualitativeFacts
-) -> str | None:
+def _crosses_covenant_threshold(effect: Decimal, facts: QualitativeFacts) -> str | None:
     if facts.covenant_headroom is None:
         return None
     if abs(effect) >= facts.covenant_headroom:
@@ -236,9 +234,7 @@ def assess(
     quantitatively_material = rollover_material or iron_curtain_material
 
     fired = evaluate_qualitative(misstatement, facts, enabled_factors)
-    clearly_trivial = (
-        max(rollover, iron_curtain) < trivial_floor and not fired
-    )
+    clearly_trivial = max(rollover, iron_curtain) < trivial_floor and not fired
     requires_adjustment = quantitatively_material or bool(fired)
 
     if quantitatively_material:
